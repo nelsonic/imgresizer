@@ -13,7 +13,10 @@ do all the image manipulation on the client-side.
 But since the brief states we have to build a node.js web service, I will 
 demonstrate solutions using node.js first. 
 
-**Note**: This app runs on EC2+S3.
+
+## Initial (General) Setup 
+
+I built this app to run on Amazon EC2+S3 
 If you do not yet have an AWS EC2 instance set up,
 follow my simple tutorial: https://github.com/nelsonic/EC2Setup
 
