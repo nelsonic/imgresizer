@@ -1,0 +1,41 @@
+<html> 
+  <head>
+    <title>S3 POST Form</title> 
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" media="screen" 
+    href="http://nelsonic.s3.amazonaws.com/imgresizer/style.css"  />
+  </head>
+
+  <body>
+    Image Url: <input type="text" id="imgurl" name="imgurl">
+    <br />
+    <p id='or'>OR</p>
+
+     <!-- Don't change this form until you read: http://aws.amazon.com/articles/1434 -->
+    <form action="https://nelsonic.s3.amazonaws.com/" method="post" enctype="multipart/form-data">
+      <input type="hidden" name="key" value="imgresizer/resized/${filename}" id='filename'>
+      <input type="hidden" name="AWSAccessKeyId" value="AKIAIK6S2HJHV664GW6Q"> 
+      <input type="hidden" name="acl" value="public-read"> 
+      <input type="hidden" name="success_action_redirect" value="./resize.html">
+      <input type="hidden" name="policy" value="eyJleHBpcmF0aW9uIjogIjIwMTQtMDEtMDFUMDA6MDA6MDBaIiwgICJjb25kaXRpb25zIjogWyAgICAgeyJidWNrZXQiOiAibmVsc29uaWMifSwgICAgIFsic3RhcnRzLXdpdGgiLCAiJGtleSIsICJpbWdyZXNpemVyL3Jlc2l6ZWQvIl0sICAgIHsiYWNsIjogInB1YmxpYy1yZWFkIn0sICAgIHsic3VjY2Vzc19hY3Rpb25fcmVkaXJlY3QiOiAiLi9yZXNpemUuaHRtbCJ9LCAgICBbInN0YXJ0cy13aXRoIiwgIiRDb250ZW50LVR5cGUiLCAiIl0sICAgIFsiY29udGVudC1sZW5ndGgtcmFuZ2UiLCAwLCA0MTk0MzA0XSAgXX0=">
+      <input type="hidden" name="signature" value="rlrSXXIXst4youWW6JPwYlxrp7Y=">
+      <input type="hidden" id='content-type' name="Content-Type" value="image/png">
+      <!-- Include any additional input fields here -->
+
+      Select a File on your Computer to Upload and Resize: <br />
+      <input name="file" type="file" id='file'> 
+      <br> 
+      <input type="submit" id="uploadbtn" value="Upload to S3"> 
+    </form> 
+    <p>Dimensions you want the image to have: </p>
+    Width:<input type="text">
+    <br />
+    Height:<input type="text">
+    <br />
+    <input type="submit" id='uploadbtn2' value="Resize Image and Upload S3"> 
+    <br />
+    <img id="resized" src="">
+    <!-- <script src='http://nelsonic.s3-external-3.amazonaws.com/imgresizer/imgresizer.js'> </script> -->
+    <script src='./imgresizer.js'> </script>
+  </body>
+</html>
