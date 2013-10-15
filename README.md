@@ -93,21 +93,20 @@ nodemon app
 
 
 
-
-I could use [Image Magic](https://github.com/rsms/node-imagemagick) 
-but in addition to the Node module this would require 
-installing/maintaining the library on all machines that 
+- - - 
+Client Side
+- - -
+I'm not a huge fan of the server-side approach to image manipulation.
+In addition to the Node modules that we have  
+install/maintain there is the ImageMagic library on all machines that 
 are going to run image resizer (one more package to maintain...)
 
-Instead I'm going to try something *different*.
-
-I've challenged myself to use as few lines of code and modules as possible.
-
-What about re-sizing the image *client side* and uploading 
-it *directly to Amazon S3* without going through 
-*any* web server thus **eliminate processing bottleneck**?
+Why not re-size the image(s) *client side* and upload
+them *directly to Amazon S3* without going through 
+*any* web server thus **eliminating processing bottlenecks**...?
 http://aws.amazon.com/articles/1434
 
+[ Work in Progress - V. Promising! :-]
 
 Steps:
 
