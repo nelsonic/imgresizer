@@ -1,0 +1,23 @@
+{
+  "name": "imgresizer",
+  "version": "0.0.1",
+  "author": "https://twitter.com/nelsonic",
+  "description":"A image resizer without an Image Library",
+  "dependencies": {
+    "hiredis":"*",
+    "redis":"*",
+    "imagemagick":"*"
+	}, 
+	"license": "MIT",
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  }, 
+  "keywords": [
+    "Image Resize"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nelsonic/imgresizer.git"
+  }
+}
