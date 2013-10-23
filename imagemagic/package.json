@@ -6,12 +6,11 @@
   "dependencies": {
     "hiredis":"*",
     "redis":"*",
-    "imagemagick":"*",
-    "jasmine-node":"*"
+    "imagemagick":"*"
 	}, 
   "devDependencies": {
-    "karma": "~0.10.2",
-    "karma-coverage": "~0.1.0"
+    "mocha":"*",
+    "istanbul":"*"
   },
 	"license": "MIT",
   "engines": {
