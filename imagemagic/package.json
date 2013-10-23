@@ -6,8 +6,13 @@
   "dependencies": {
     "hiredis":"*",
     "redis":"*",
-    "imagemagick":"*"
+    "imagemagick":"*",
+    "jasmine-node":"*"
 	}, 
+  "devDependencies": {
+    "karma": "~0.10.2",
+    "karma-coverage": "~0.1.0"
+  },
 	"license": "MIT",
   "engines": {
     "node": "0.10.x",
@@ -19,5 +24,8 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nelsonic/imgresizer.git"
+  },
+    "scripts": {
+        "test": "node_modules/.bin/karma start karma.conf.js"
   }
 }

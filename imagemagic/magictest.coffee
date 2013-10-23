@@ -24,8 +24,6 @@ getFilenameWithoutExtension = (filename,format) ->
   # in the filename e.g. myphoto.jpg.jpg (it happens! google it!)
   filenameWithoutExtension = filename.substring(0, lastOccurenceOfExtension)
 
-  # console.log oi.filenameWithoutExtension
-
 
 getHeightFromWidthUsingAspectRatio = (oi, width, height) ->
   ri = {}
@@ -135,8 +133,9 @@ saveResizeDataToRedis = (oi, ri, existingData = {}) ->
     }
     # if data already exists for this file we want to preserve it:
     if existingData != null && existingData.length > 0
-      for key, val of existingData
-        resizeData[key] = val
+      console.log "                            >>  attempt merge existingData"
+      for obj in existingData
+        resizeData[k] = v for k, v of obj
     # write data to Redis 
     client.set(originalFile, JSON.stringify(resizeData), redis.print)
 
@@ -165,15 +164,19 @@ findOrDownloadImageFile = (filename, width, height, callback) ->
         console.log "ri.width = #{ri.width}"
         console.log "            typeof  data[ri.width] : #{typeof data[ri.width]}"
         # console.dir data[ri.width]
-        console.log "data[ri.width] length : #{data[ri.width].length}"
         if data[ri.width] != null && typeof data[ri.width] != "undefined" # && data[ri.width].length > 0
+          console.log "data[ri.width] length : #{data[ri.width].length}"
           console.log data[ri.width]
           return data[ri.width]
         else
-          console.log "FUCK!!!"
+          console.log "                                                          Resize image"
         # else we need to create a new re-sized image
         # but send on the existing data so it can be preserved
-
+          # add properties to oi to allow resizeImage to do its thing:
+          oi.filename = filename
+          oi.format = getImageFormatFromFilename(oi.filename)
+          oi.filenameWithoutExtension = getFilenameWithoutExtension(filename,oi.format)
+          resizeImage(oi,ri,data)
 
       # else
       #   return callback? localFilename
@@ -204,23 +207,23 @@ findOrDownloadImageFile = (filename, width, height, callback) ->
 
 
 remoteFile = 'http://www.wollemipine.co.uk/acatalog/Wallpaper_CollectorsEdition800x600.jpg'
-findOrDownloadImageFile(remoteFile,0,450, (localFilename) ->
+findOrDownloadImageFile(remoteFile,0,650, (localFilename) ->
   console.log "Local Filename: #{localFilename}"
-  getOriginalImageData(localFilename,0,450, (oi,ri) -> resizeImage(oi,ri) )
+  getOriginalImageData(localFilename,0,650, (oi,ri) -> resizeImage(oi,ri) )
 )
 
 path     = __dirname+'/sample-images/'
 localKittens = path + 'kittens.jpg'
-findOrDownloadImageFile(localKittens, 0,600,  (localFilename) ->
-  console.log "Local Filename: #{localFilename}"
-  getOriginalImageData(localFilename,0,600, (oi,ri) -> resizeImage(oi,ri) )
-)
-
-remoteFile2 = 'http://www.dvdsreleasedates.com/posters/800/0/300-movie-poster.jpg'
-findOrDownloadImageFile(remoteFile2, 0,200,  (localFilename) ->
+findOrDownloadImageFile(localKittens, 0,200,  (localFilename) ->
   console.log "Local Filename: #{localFilename}"
   getOriginalImageData(localFilename,0,200, (oi,ri) -> resizeImage(oi,ri) )
 )
+
+# remoteFile2 = 'http://www.dvdsreleasedates.com/posters/800/0/300-movie-poster.jpg'
+# findOrDownloadImageFile(remoteFile2, 0,300,  (localFilename) ->
+#   console.log "Local Filename: #{localFilename}"
+#   getOriginalImageData(localFilename,0,300, (oi,ri) -> resizeImage(oi,ri) )
+# )
 
 # stripDimensionsFromSourceImageName('bunny3381x2468.jpg')
 

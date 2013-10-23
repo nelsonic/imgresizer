@@ -41,3 +41,6 @@ client.get(originalFile, (err, reply) ->
 client.quit( (err, res) ->
   console.log "Exiting from quit command" 
 )
+
+
+
