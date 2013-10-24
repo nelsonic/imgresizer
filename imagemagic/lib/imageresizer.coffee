@@ -112,20 +112,48 @@ IR.getFilenameWithoutExtension = (filename,format) ->
   @param width (optional) the width of the image
   @param height (optional) the height of the image
   @return ri an object containing the width & height of the re-sized image (ri)
+          or false if more than one parameter is not supplied
 ###
 
 IR.getHeightFromWidthUsingAspectRatio = (oi, width, height) ->
-  ri = {}
-  # check if the resized image width is defined
-  if typeof width != "undefined" && width != undefined && parseInt(width) > 0
-    ri.width = parseInt(width)
-    ri.height = Math.round(ri.width / oi.aspectRatio)
-  else if typeof height != "undefined" && height != undefined && parseInt(height) > 0
-    ri.height = parseInt(height)
-    ri.width = Math.round(ri.height * oi.aspectRatio)
-  else
+  if typeof oi == "undefined" || oi == undefined || oi.aspectRatio == undefined
     return false
-  return ri
+  else
+    ri = {}
+    # check if the resized image width is defined
+    if typeof width != "undefined" && width != undefined && parseInt(width) > 0
+      ri.width = parseInt(width)
+      ri.height = Math.round(ri.width / oi.aspectRatio)
+    else if typeof height != "undefined" && height != undefined && parseInt(height) > 0
+      ri.height = parseInt(height)
+      ri.width = Math.round(ri.height * oi.aspectRatio)
+    else
+      return false
+    return ri
+
+###
+  Using the imagemagic (im) module's identify method to get
+  the original image (oi) attributes
+###
+
+# Get Original Image Attributes (oi = original image)
+IR.getOriginalImageAttributes = (filename, width, height, callback) ->
+  im.identify(filename, (err, oi) ->
+    if (err) 
+      throw err
+    # add the filename and format to the oi object
+    # to simplify passing around the variables
+    oi.filename = filename
+    oi.format   = getImageFormatFromFilename(oi.filename)
+
+    # we use aspect ratio to derive height from width or vice-versa
+    oi.aspectRatio = (oi.width / oi.height)
+    oi.filenameWithoutExtension = getFilenameWithoutExtension(filename,oi.format)
+    ri = getHeightFromWidthUsingAspectRatio(oi, width, height)
+    callback? oi,ri 
+  )
+
+
 
 # if typeof module != 'undefined'
 module.exports = IR 
