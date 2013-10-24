@@ -52,4 +52,55 @@ IR.stripDimensionsFromSourceImageName = function(file, format) {
   }
 };
 
+/*
+  returns just the filename e.g. 'kitten.jpg' >> 'kitten'
+  we use this to apply the dimmensions to re-sized image filename
+  e.g. kitten.jpg >> 'kitten' + '-400x300' .'jpg'
+  the reason we have a method for this instead of just stripping the 
+  format off the filename is for the instances where people call their
+  file kitten.jpg.jpg don't laugh, it happens more often than you think!
+  @param filename the name of the file e.g. 'kitten.jpg'
+  @param format the file format e.g. '.jpg'
+  @return filenameWithoutExtension e.g. 'kitten'
+*/
+
+
+IR.getFilenameWithoutExtension = function(filename, format) {
+  var filenameWithoutExtension, lastFowardSlash, lastOccurenceOfExtension;
+  lastFowardSlash = filename.lastIndexOf('/');
+  if (lastFowardSlash !== null && lastFowardSlash > 0) {
+    filename = filename.substring(lastFowardSlash + 1, filename.length);
+  }
+  filename = IR.stripDimensionsFromSourceImageName(filename, format);
+  lastOccurenceOfExtension = filename.lastIndexOf("." + format);
+  filenameWithoutExtension = filename.substring(0, lastOccurenceOfExtension);
+  return filenameWithoutExtension;
+};
+
+/* 
+  if only spplied with either width or height we can calculate 
+  width from height or height from width using the original image's (oi)
+  aspect ratio. (which we expect to be a property oi.aspectRatio)
+  @param oi an object containing properties of the original image (aspectRatio)
+  @param width (optional) the width of the image
+  @param height (optional) the height of the image
+  @return ri an object containing the width & height of the re-sized image (ri)
+*/
+
+
+IR.getHeightFromWidthUsingAspectRatio = function(oi, width, height) {
+  var ri;
+  ri = {};
+  if (typeof width !== "undefined" && width !== void 0 && parseInt(width) > 0) {
+    ri.width = parseInt(width);
+    ri.height = Math.round(ri.width / oi.aspectRatio);
+  } else if (typeof height !== "undefined" && height !== void 0 && parseInt(height) > 0) {
+    ri.height = parseInt(height);
+    ri.width = Math.round(ri.height * oi.aspectRatio);
+  } else {
+    return false;
+  }
+  return ri;
+};
+
 module.exports = IR;

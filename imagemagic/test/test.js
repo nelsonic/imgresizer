@@ -26,14 +26,6 @@ describe("IR - Image Resizer", function() {
         // would prefer to throw an error here but unable to for some reason... :-(
     });
 
-    it("getImageFormatFromFilename returns false for file incorrect extension e.g: document.doc", function() {
-        var filename = 'document.doc';
-        assert.equal(IR.getImageFormatFromFilename(filename), false);
-        // assert.throws( function() { IR.getImageFormatFromFilename(filename) } , Error );
-        // http://stackoverflow.com/questions/4144686/how-to-write-a-test-which-expects-an-error-to-be-thrown
-    });
-
-
     it("stripDimensionsFromSourceImageName Should strip dimensions from Wallpaper800x600.jpg", function() {
         var originalImage = 'http://www.wollemipine.co.uk/acatalog/Wallpaper800x600.jpg';
         var stripped = IR.stripDimensionsFromSourceImageName(originalImage, 'jpg');
@@ -66,5 +58,47 @@ describe("IR - Image Resizer", function() {
         var stripped = IR.stripDimensionsFromSourceImageName(originalImage, 'jpg');
         assert.equal(stripped, originalImage);
     });
+
+    it("getFilenameWithoutExtension returns kittens for kittens.jpg", function() {
+        var filename = 'kittens.jpg';
+        var format = IR.getImageFormatFromFilename(filename);
+        var filenameWithoutExtension = IR.getFilenameWithoutExtension(filename,format);
+        // console.log('filenameWithoutExtension: '+filenameWithoutExtension);
+        assert.equal(filenameWithoutExtension,'kittens')
+    });
+
+    it("getFilenameWithoutExtension returns selfie for http://fb.me/pix/selfie800x600.jpg", function() {
+        var filename = 'http://fb.me/pix/selfie800x600.jpg';
+        var format = IR.getImageFormatFromFilename(filename);
+        var filenameWithoutExtension = IR.getFilenameWithoutExtension(filename,format);
+        // console.log('filenameWithoutExtension: '+filenameWithoutExtension);
+        assert.equal(filenameWithoutExtension,'selfie')
+    });
+
+
+    it("getHeightFromWidthUsingAspectRatio returns both width and height given either + aspectRatio", function() {
+        var oi = {aspectRatio : 800/600}
+        var desiredWidth = null
+        var desiredHeight = 300
+        ri = IR.getHeightFromWidthUsingAspectRatio(oi, desiredWidth, desiredHeight)
+        assert.equal(ri.width,400)
+    });
+
+    it("getHeightFromWidthUsingAspectRatio returns both width and height given either + aspectRatio", function() {
+        var oi = {aspectRatio : 900/1200}
+        var desiredWidth = 600
+        var desiredHeight = 0
+        ri = IR.getHeightFromWidthUsingAspectRatio(oi, desiredWidth, desiredHeight)
+        assert.equal(ri.height,800)
+    });
+
+    it("getHeightFromWidthUsingAspectRatio returns false if BOTH width and height NOT supplied", function() {
+        var oi = {aspectRatio : 900/1200}
+        var desiredWidth = 0
+        var desiredHeight = 0
+        ri = IR.getHeightFromWidthUsingAspectRatio(oi, desiredWidth, desiredHeight)
+        assert.equal(ri,false)
+    });
+
 
 });

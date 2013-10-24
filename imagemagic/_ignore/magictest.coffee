@@ -63,7 +63,7 @@ getOriginalImageData = (filename, width, height, callback) ->
     # we use aspect ratio to derive height from width or vice-versa
     oi.aspectRatio = (oi.width / oi.height)
     oi.filenameWithoutExtension = getFilenameWithoutExtension(filename,oi.format)
-    ri = getHeightFromWidthUsingAspectRatio(oi,width, height)
+    ri = getHeightFromWidthUsingAspectRatio(oi, width, height)
     callback? oi,ri 
   )
 
