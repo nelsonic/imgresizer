@@ -21,14 +21,16 @@ IR.getImageFormatFromFilename = (filename) ->
   if fileparts.length > 1
     format = fileparts[fileparts.length-1].toLowerCase()
   else
-    format = 'none'
+    format = false
   # confirm the file format is valid (otherwize halt processing)
   if IR.allowedImageFormats.indexOf(format) >= 0
     return format
   else
     # console.log "#{format} is NOT a valid Image!"
     # consider using Winston here to avoid crashing the app
-    throw new Error("File format #{format} is invalid in #{filename}!")
+    # throw new Error("Wrong format")
+    # throwing an error is lame so returning false instead.
+    return false
 
 # getFilenameWithoutExtension = (filename,format) ->
 #   # strip any path data e.g. /mypics/sub/directory
@@ -72,4 +74,4 @@ IR.stripDimensionsFromSourceImageName = (file, format) ->
 
 
 # if typeof module != 'undefined'
-#   module.exports = IR
+module.exports = IR 
