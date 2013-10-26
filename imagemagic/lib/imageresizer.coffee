@@ -1,20 +1,17 @@
-# im = require 'imagemagick'
+im = require 'imagemagick'
+# console.log im
 # fs = require 'fs'
 # http = require 'http'
 # redis = require 'redis'
-IR = {}
-# IR.sqrt = (x) ->
-#   throw new Error("sqrt can't work on negative number")  if x < 0
-#   Math.exp Math.log(x) / 2
-IR.allowedImageFormats = 'jpg jpeg gif png'
+IR = { allowedImageFormats : 'jpg jpeg gif png' }
 
-###
-Given an image file e.g: kittens.jpg
-extract just the file/image format e.g: jpg
-@param filename   the filename
-@return format 
-or throw error "File format #{format} is invalid!"
-so we don't try to process a non-image file!
+### getImageFormatFromFilename(filename)
+  Given an image file e.g: kittens.jpg
+  extract just the file/image format e.g: jpg
+  @param filename   the filename
+  @return format 
+  or throw error "File format #{format} is invalid!"
+  so we don't try to process a non-image file!
 ###
 IR.getImageFormatFromFilename = (filename) ->
   fileparts = filename.split('.')
@@ -32,29 +29,14 @@ IR.getImageFormatFromFilename = (filename) ->
     # throwing an error is lame so returning false instead.
     return false
 
-
-# getFilenameWithoutExtension = (filename,format) ->
-#   # strip any path data e.g. /mypics/sub/directory
-#   lastFowardSlash = filename.lastIndexOf('/')
-#   if lastFowardSlash != null && lastFowardSlash > 0
-#     filename = filename.substring(lastFowardSlash+1, filename.length)
-#   # remove image dimensions from filename
-#   filename = stripDimensionsFromSourceImageName(filename, format)
-#   # isolate the name of the file from the extension so we
-#   # can put the file dimensions in the resized filename
-#   lastOccurenceOfExtension = filename.lastIndexOf("."+format)
-#   # ensure we don't strip a file that includes the extension
-#   # in the filename e.g. myphoto.jpg.jpg (it happens! google it!)
-#   filenameWithoutExtension = filename.substring(0, lastOccurenceOfExtension)
-
-###
-we don't want the sunset800x600.jpg to become sunset800x600-400x300.jpg
-so we need to strip the 800x600 from the original filename
-and then call the re-sized image sunset-400x300.jpg
-but not strip out the digits in andre3000.jpg or 2000ad.jpg 
-@param file    the filename of the original file
-@param format  the file format e.g. 'jpg' or 'png'
-@return nodimensions + format or simply the original file
+### stripDimensionsFromSourceImageName(file, format)
+  we don't want the sunset800x600.jpg to become sunset800x600-400x300.jpg
+  so we need to strip the 800x600 from the original filename
+  and then call the re-sized image sunset-400x300.jpg
+  but not strip out the digits in andre3000.jpg or 2000ad.jpg 
+  @param file    the filename of the original file
+  @param format  the file format e.g. 'jpg' or 'png'
+  @return nodimensions + format or simply the original file
 ###
 IR.stripDimensionsFromSourceImageName = (file, format) ->
   # this regular expression finds mypic3381_x_2468.jpg or mypic3381x2468.jpg
@@ -73,7 +55,7 @@ IR.stripDimensionsFromSourceImageName = (file, format) ->
   else
     return file
 
-###
+### getFilenameWithoutExtension(filename, format)
   returns just the filename e.g. 'kitten.jpg' >> 'kitten'
   we use this to apply the dimmensions to re-sized image filename
   e.g. kitten.jpg >> 'kitten' + '-400x300' .'jpg'
@@ -84,8 +66,7 @@ IR.stripDimensionsFromSourceImageName = (file, format) ->
   @param format the file format e.g. '.jpg'
   @return filenameWithoutExtension e.g. 'kitten'
 ###
-
-IR.getFilenameWithoutExtension = (filename,format) ->
+IR.getFilenameWithoutExtension = (filename, format) ->
   # console.log "Filename : #{filename} | Format: #{format}"
   # strip any path data e.g. /mypics/sub/directory
   lastFowardSlash = filename.lastIndexOf('/')
@@ -104,7 +85,7 @@ IR.getFilenameWithoutExtension = (filename,format) ->
   # console.log "filenameWithoutExtension : #{filenameWithoutExtension}"
   return filenameWithoutExtension
 
-### 
+### getHeightFromWidthUsingAspectRatio(oi, width, height)
   if only spplied with either width or height we can calculate 
   width from height or height from width using the original image's (oi)
   aspect ratio. (which we expect to be a property oi.aspectRatio)
@@ -114,7 +95,6 @@ IR.getFilenameWithoutExtension = (filename,format) ->
   @return ri an object containing the width & height of the re-sized image (ri)
           or false if more than one parameter is not supplied
 ###
-
 IR.getHeightFromWidthUsingAspectRatio = (oi, width, height) ->
   if typeof oi == "undefined" || oi == undefined || oi.aspectRatio == undefined
     return false
@@ -131,29 +111,35 @@ IR.getHeightFromWidthUsingAspectRatio = (oi, width, height) ->
       return false
     return ri
 
-###
+### getOriginalImageAttributes(filename, callback)
   Using the imagemagic (im) module's identify method to get
   the original image (oi) attributes
 ###
 
+# Having a bit of trouble with this method... :-(
+# submitted an isse to the developer:
+# https://github.com/rsms/node-imagemagick/issues/111
+
+
 # Get Original Image Attributes (oi = original image)
-IR.getOriginalImageAttributes = (filename, width, height, callback) ->
-  im.identify(filename, (err, oi) ->
-    if (err) 
-      throw err
+IR.getOriginalImageAttributes = (filename, callback) ->
+  im.identify(filename, (err, ia) ->
+    # if (err) 
+    #   console.log err
+    # else
+    #   console.log oi
+    console.log "Filename: #{filename}"
     # add the filename and format to the oi object
     # to simplify passing around the variables
-    oi.filename = filename
-    oi.format   = getImageFormatFromFilename(oi.filename)
+    # oi.filename = filename
+    # oi.format   = getImageFormatFromFilename(oi.filename)
 
     # we use aspect ratio to derive height from width or vice-versa
-    oi.aspectRatio = (oi.width / oi.height)
-    oi.filenameWithoutExtension = getFilenameWithoutExtension(filename,oi.format)
-    ri = getHeightFromWidthUsingAspectRatio(oi, width, height)
-    callback? oi,ri 
+    # oi.aspectRatio = (oi.width / oi.height)
+    # oi.filenameWithoutExtension = getFilenameWithoutExtension(filename,oi.format)
+    # ri = getHeightFromWidthUsingAspectRatio(oi, width, height)
+    console.log ia
+    callback ia
   )
-
-
-
-# if typeof module != 'undefined'
+# IR.im = im
 module.exports = IR 

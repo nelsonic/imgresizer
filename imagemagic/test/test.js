@@ -100,5 +100,33 @@ describe("IR - Image Resizer", function() {
         assert.equal(ri,false)
     });
 
+    it("getHeightFromWidthUsingAspectRatio returns false if oi.aspectRatio NOT supplied", function() {
+        var oi = {},
+            desiredWidth = 600,
+            desiredHeight = 400,
+        ri = IR.getHeightFromWidthUsingAspectRatio(oi, desiredWidth, desiredHeight);
+        assert.equal(ri,false);
+    });
+
+
+    xit("getOriginalImageAttributes returns oi object (original image attributes)", function() {
+        var parentDir = __dirname.substring(0, __dirname.lastIndexOf('/'));
+        // console.log(parentDir);
+        var filename = parentDir+'/sample-images/kittens.jpg';
+        // IR.getOriginalImageAttributes(filename, function(oi) {
+        //     console.log(oi);
+        //     assert.equal(oi.width,1600);
+        // })
+        console.log(IR.im);
+        IR.im.identify(filename, function(err,ia) {
+            if(err) console.log(err);
+            console.log(ia.width);
+        });
+
+
+
+    });
+
+
 
 });
